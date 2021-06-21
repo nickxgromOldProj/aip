@@ -1,0 +1,69 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    Image1: TImage;
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  i, px, py, x, y: integer;
+  h: byte;
+begin
+  with Image1.Canvas do
+  begin
+    Pen.Color := clBlack;
+    Pen.Width := 1;
+    MoveTo(0, 320);
+    LineTo(640,320);
+    MoveTo(320, 0);
+    LineTo(320, 640);
+  end;
+
+  h := 20;
+  px := 0;
+  py := 310;
+  i := 0;
+  while px<640 do
+  begin
+    With Image1.Canvas do
+    begin
+      MoveTo(px, py);
+      LineTo(px, py+20);
+    end;
+    px := px+h;
+  end;
+
+  px := 310;
+  py := 0;
+   while py<640 do
+  begin
+    With Image1.Canvas do
+    begin
+      MoveTo(px, py);
+      LineTo(px+20, py);
+    end;
+    py := py+h;
+  end;
+end;
+
+end.
+ 

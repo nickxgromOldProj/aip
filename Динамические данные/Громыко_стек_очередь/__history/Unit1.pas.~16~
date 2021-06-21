@@ -1,0 +1,194 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
+type
+  chain = ^elem;
+  elem = record
+    inf: string;
+    link: chain;
+  end;
+
+  TForm1 = class(TForm)
+    ListBox1: TListBox;
+    ListBox2: TListBox;
+    ListBox3: TListBox;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    OpenDialog1: TOpenDialog;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure stackIn(var stackHead: chain; element: string);
+    procedure stackToList;
+    function stackOut(): string;
+    procedure stackListPrint;
+    procedure createQuene;
+    function stackListOut: string;
+    procedure queneIn(elem: string;);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+  stack, stackList, queneHead, queneEnd, stackHead: chain;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  f: textFile;
+  element: string;
+begin
+  OpenDialog1.InitialDir := ExtractFilePath(Application.ExeName) + 'res';
+
+  if OpenDialog1.Execute then
+  begin
+    assignFile(f, OpenDialog1.FileName);
+    reset(f);
+
+    stackHead := nil;
+    while not eof(f) do
+    begin
+      readln(f, element);
+      stackIn(stackHead, element);
+    end;
+
+    stackToList();
+    stackListPrint;
+    closeFile(f);
+  end;
+end;
+
+procedure TForm1.stackIn(var stackHead: chain; element: string);
+Begin
+    new(stack);
+    stack^.inf := element;
+    stack^.link := stackHead;
+    stackHead := stack;
+End;
+
+procedure TForm1.stackToList;
+var
+  q: chain;
+begin
+  new(stackList);
+  q := stackList;
+  while stackHead<>nil do
+  begin
+    q^.inf := stackOut;
+    new(q^.link);
+    q := q^.link
+  end;
+  q^.link := nil;
+end;
+
+function TForm1.stackOut: string;
+var
+  q: chain;
+begin
+  if stackHead<>nil then
+  begin
+    result := stackHead^.inf;
+    q := stackHead;
+    stackHead := stackHead^.link;
+    dispose(q);
+  end;
+end;
+
+procedure TForm1.stackListPrint;
+var
+  q: chain;
+begin
+  listBox1.Clear;
+  q := stackList;
+  while q^.link<>nil do
+  begin
+    listBox1.Items.Add(q^.inf);
+    q := q^.link;
+  end;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  k, i: integer;
+  elem: string;
+  isEnd: boolean;
+begin
+  isEnd := false;
+  k := StrToInt(Edit1.Text);
+  for i := 1 to k do
+  begin
+    elem := stackListOut;
+    if elem='#end' then
+      isEnd := true
+    else
+      listBox2.Items.Add(IntToStr(i) + ') ' + elem)
+  end;
+  if isEnd then
+  begin
+    showMessage('Все элементы из списка №1 были добавлены');
+    listBox1.Clear;
+  end
+  else
+    stackListPrint;
+end;
+
+procedure TForm1.createQuene;
+begin
+  queneHead := nil;
+  queneEnd := nil;
+end;
+
+function TForm1.stackListOut: string;
+var
+  q: chain;
+begin
+  if stackList^.link<>nil then
+  begin
+    q := stackList;
+    stackList := stackList^.link;
+    result := q^.inf;
+    dispose(q);
+  end
+  else
+    result := '#end';
+end;
+
+procedure TForm1.queneIn(elem: string);
+var
+  q: chain;
+begin
+  new(q);
+  q^.inf := elem;
+  q^.link := nil;
+  if queneHead=nil then
+  begin
+    queneHead := q;
+    queneEnd := q;
+  end
+  else
+  begin
+    queneEnd^.link := q;
+    queneEnd := q;
+  end;
+end;
+
+end.
